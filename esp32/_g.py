@@ -1,8 +1,9 @@
 import neopixel, machine
+import driver.trickLED as trickLED 
 
-np = neopixel.NeoPixel(machine.Pin(13), 256)
+np = trickLED.TrickLED(machine.Pin(13), 256)
 
-active_module = "stocks"
+active_module = "clock"
 
 async def bruh():
     pass

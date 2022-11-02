@@ -1,15 +1,16 @@
-import machine
-import neopixel
+import machine, sys, time
 import uasyncio as asyncio
 import math
 from collections import OrderedDict
 
 from utils import *
 import _g
-import stocks
+import modules.stocks as stocks
+import modules.pixelart as pixelart
+import modules.clock as clock
 
 np = _g.np
-np.fill((0, 0, 0))
+np.fill((0,0,0))
 
 change = True
 
@@ -20,6 +21,10 @@ async def module_loop():
             change = False
             if _g.active_module == "stocks":
                 await stocks.run()
+            elif _g.active_module == "pixelart":
+                await pixelart.run()
+            elif _g.active_module == "clock":
+                await clock.run()
 
         await asyncio.sleep(1)
 
@@ -31,7 +36,6 @@ async def main():
     asyncio.create_task(module_loop())
 
     asyncio.get_event_loop().run_forever()
-
 
 if __name__ == "__main__":
     asyncio.run(main())
