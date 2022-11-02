@@ -103,7 +103,7 @@ font_small = {
     ],
     "P": [
         [1, 1, 1],
-        [1, 1, 0],
+        [1, 1, 1],
         [1, 0, 0],
     ],
     "Q": [
@@ -1073,7 +1073,7 @@ def write_word(offsets, color=(5, 5, 5), clear=True):
     for x, y in offsets:
         np[get_led(x,y)] = color
 
-async def scroll_words():
+async def scroll_loop():
     # wait until all tasks are done scrolling before repeatinga
     while True:
         
@@ -1098,7 +1098,6 @@ async def scroll_words():
                     task["offset"] = 17
                     task["enabled"] = False
         
-        np.write()
         await asyncio.sleep(0.15)
 
 def queue_scroll(offsets, id="", repeat=False):

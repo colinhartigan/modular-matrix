@@ -21,9 +21,9 @@ async def run():
     async def next_ticker():
         nonlocal i
         data = ticker_data[i]
-        ticker_text, ticker_overflow = generate_word_offsets(data["ticker"], 1, 1, small_font=True)
+        ticker_text, ticker_overflow = generate_word_offsets(data["ticker"], 1, 1, 0)
         price_text, price_overflow = generate_word_offsets(f"${str(round(data["price"],2))}", 1, 5)
-        change_text, change_overflow = generate_word_offsets(f"{str(data["change"])}%", 1, 11, small_font=True)
+        change_text, change_overflow = generate_word_offsets(f"{str(data["change"])}%", 1, 11, 0)
 
         queue_scroll(ticker_text, id="ticker", repeat=False)
         queue_scroll(price_text, id="price", repeat=False)

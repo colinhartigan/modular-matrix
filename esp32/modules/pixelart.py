@@ -9,5 +9,3 @@ async def run():
         for j, pixel in enumerate(row):
             pixel = (pixel[0] // brightness, pixel[1] // brightness, pixel[2] // brightness)
             _g.np[get_led(i, j)] = pixel
-
-    _g.np.write()

@@ -14,8 +14,7 @@ async def run():
     while True:
     
         time = rtc.datetime()
-        hour_tens = time[3]
-        hour_ones = time[4]
+        hours = time[4] - 4 # -4 for EDT, -5 for EST
         mins = time[5]
 
         if int(mins) < 10:
@@ -24,16 +23,13 @@ async def run():
         secs = time[6]
         colon = int(secs) % 2 == 0
 
-        print(f"{hour_tens}{hour_ones}:{mins}:{secs}")
+        print(f"{hours}:{mins}:{secs}")
 
-        hour_offsets, _ = generate_word_offsets(f"{hour_tens}{hour_ones}", 3, 1, 2)
+        hour_offsets, _ = generate_word_offsets(str(hours), 3, 1, 2)
         mins_offsets, _ = generate_word_offsets((':' if colon else ' ') + f"{mins}", 1, 8, 2)
 
-        #_g.np.fill_gradient(0xDC143C, 0xF08080, 25)
-        _g.np.fill_solid((0,0,0))
+        _g.np.fill((0,0,0))
         write_word(hour_offsets, clear=False)
         write_word(mins_offsets, clear=False)
-
-        np.write()
         
         await asyncio.sleep(1)
