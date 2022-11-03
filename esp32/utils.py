@@ -1,5 +1,5 @@
 import machine
-import neopixel
+from customLED import np
 import uasyncio as asyncio
 import math
 from collections import OrderedDict
@@ -448,11 +448,11 @@ font_large = {
         [1, 1, 1],
     ],
     "1": [
-        [0, 1],
-        [1, 1],
-        [0, 1],
-        [0, 1],
-        [0, 1],
+        [0, 1, 0],
+        [1, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
+        [1, 1, 1],
     ],
     "2": [
         [1, 1, 1],
@@ -1033,14 +1033,18 @@ font_lookup = [font_small, font_large, font_xl]
 # globals
 def get_led(x, y): return led_map[y][x]
 scroll_tasks = []
-np = _g.np
 
 
 # utility functions
-def clear_row(minY, maxY):
+def clear_row(minY, maxY, targetColor=None):
     for x in range(0, 16):
         for y in range(minY, maxY+1):
-            np[get_led(x,y)] = (0,0,0)
+            led = get_led(x, y)
+            if targetColor is not None:
+                if np[led] == targetColor:
+                    np[led] = (0, 0, 0)
+            else:
+                np[led] = (0,0,0)
 
 def clear_area(minX, maxX, minY, maxY):
     for x in range(minX, maxX+1):
@@ -1085,11 +1089,11 @@ async def scroll_loop():
 
         task_copy = [i for i in scroll_tasks if i["enabled"]]
         for task in task_copy:
-            clear_row(task["attrs"]["minY"], task["attrs"]["maxY"])
+            clear_row(task["attrs"]["minY"], task["attrs"]["maxY"], task["color"] if task["clear"] else None)
             new = [(x + task["offset"], y) for x, y in task["offsets"]]
             for led in new:
                 if led[0] >= 0 and led[0] < 16:
-                    np[get_led(led[0], led[1])] = (20, 20, 20)
+                    np[get_led(led[0], led[1])] = task["color"]
             task["offset"] -= 1
             if task["offset"] == task["endpoint"]:
                 if not task["repeat"]:
@@ -1100,7 +1104,7 @@ async def scroll_loop():
         
         await asyncio.sleep(0.15)
 
-def queue_scroll(offsets, id="", repeat=False):
+def queue_scroll(offsets, id="", repeat=False, color=(20,20,20), clear=False):
     dupe = [i for i in scroll_tasks if i["id"] == id]
     
     if len(dupe) == 0:
@@ -1116,6 +1120,8 @@ def queue_scroll(offsets, id="", repeat=False):
             "offset": 17,
             "repeat": repeat,
             "enabled": True,
+            "color": color,
+            "clear": clear,
             "attrs": {
                 "minX": minX,
                 "maxX": maxX,

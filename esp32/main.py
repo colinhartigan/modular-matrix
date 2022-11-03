@@ -4,13 +4,10 @@ import math
 from collections import OrderedDict
 
 from utils import *
+from customLED import np
 import _g
-import modules.stocks as stocks
-import modules.pixelart as pixelart
-import modules.clock as clock
 import modules.weather as weather
 
-np = _g.np
 np.fill((0,0,0))
 
 change = True
@@ -23,12 +20,6 @@ async def module_loop():
             change = False
             if task:
                 task.cancel()
-            if _g.active_module == "stocks":
-                task = asyncio.create_task(stocks.run())
-            elif _g.active_module == "pixelart":
-                task = asyncio.create_task(pixelart.run())
-            elif _g.active_module == "clock":
-                task = asyncio.create_task(clock.run())
             elif _g.active_module == "weather":
                 task = asyncio.create_task(weather.run())
 

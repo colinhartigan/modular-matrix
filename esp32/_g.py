@@ -1,6 +1,4 @@
-import neopixel, machine
-
-np = neopixel.NeoPixel(machine.Pin(13), 256)
+import machine
 
 active_module = "weather"
 

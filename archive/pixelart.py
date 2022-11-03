@@ -1,5 +1,4 @@
 from utils import *
-import _g
 
 
 async def run():
@@ -8,4 +7,4 @@ async def run():
     for i, row in enumerate(art):
         for j, pixel in enumerate(row):
             pixel = (pixel[0] // brightness, pixel[1] // brightness, pixel[2] // brightness)
-            _g.np[get_led(i, j)] = pixel
+            np[get_led(i, j)] = pixel
