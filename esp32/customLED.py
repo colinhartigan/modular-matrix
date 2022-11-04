@@ -16,4 +16,4 @@ class LED(NeoPixel):
         val = (val[0] // self.brightness_divide, val[1] // self.brightness_divide, val[2] // self.brightness_divide)
         super().fill(val)
 
-np = LED(machine.Pin(13), 256, brightness_divide=20) 
+np = LED(machine.Pin(13), 256, brightness_divide=20)  
