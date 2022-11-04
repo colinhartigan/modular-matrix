@@ -220,9 +220,12 @@ class Weather:
     def loop(self):
         self.conditions[self.condition]()
         self.update_timer += 1
-        if self.update_timer == 3000:
+        if self.update_timer == 200:
+            self.time = False
+        if self.update_timer == 250:
             self.update_timer = 0
             self.update_weather()
+            self.time = True
 
         if self.time and not self.hide_time:
             hours_offsets, _ = generate_word_offsets(self.hours, 9, 5, 1)
