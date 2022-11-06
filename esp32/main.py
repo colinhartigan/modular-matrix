@@ -8,12 +8,10 @@ from collections import OrderedDict
 from utils import *
 from customLED import np
 import _g
-import modules.weather as weather
+import weather
 
 np.fill((0,0,0)) 
-framerate = 10
-
-lock = _thread.allocate_lock()
+framerate = 20
 
 def task_loop():
     weather_driver = weather.Weather()
@@ -34,9 +32,13 @@ def task_loop():
     ]
 
     last_time = time.ticks_ms()
+    target_frame_time = 1/framerate
+
     while True:
 
         t = time.ticks_ms()
+        time_diff = t - last_time
+        
         #print(t - last_time)
         last_time = t
 
@@ -44,19 +46,19 @@ def task_loop():
             task["task"]()
         _g.render_step = _g.render_step + 1 if _g.render_step < (framerate - 1) else 0
         np.write()
-        time.sleep(1/framerate)
+
+        time_left = target_frame_time - (1/(time.ticks_ms() - last_time)) # keep frame times consistent (under normal circumstances)
+        #print(time_left)
+        if time_left > 0:
+            time.sleep(time_left)
+        else:
+            print(f"frame time exceeded target frame time by {time_left} seconds")
 
 async def main():
     # dispatch async tasks
     # asyncio.create_task(scroll_loop())
     # asyncio.create_task(render_loop())
-    t1, t2 = None, None 
-    try:
-        t1 = _thread.start_new_thread(task_loop, ())
-        #t2 = _thread.start_new_thread(render_loop, ())
-    except KeyboardInterrupt:
-        t1.exit()
-        #t2.exit()
+    task_loop()
 
     #asyncio.get_event_loop().run_forever() 
 
