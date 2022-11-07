@@ -60,7 +60,6 @@ class Atmosphere:
                 if line["x"] + i < 16 and line["x"] + i >= 0:
                     np[get_led(line["x"] + i, line["y"])] = (40, 40, 40)   
 
-
         if day: 
             for i in range(0, 12):
                 for j in range(0, 12):
