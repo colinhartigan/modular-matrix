@@ -18,6 +18,7 @@ class Clouds:
             "shape": shapes.cloud_small
         }
         self.cloud_cycle = 0
+        self.target_cycle = 20
 
         self.moon = shapes.moon
 
@@ -28,6 +29,7 @@ class Clouds:
 
         # unpack kwargs
         cloud_cover = kwargs["cloud_cover"]
+        
         if cloud_cover >= 50 and not self.cloud["large"]:
             self.cloud["large"] = True
             self.cloud["shape"] = shapes.cloud_large
@@ -53,21 +55,32 @@ class Clouds:
         # cloud updating
         cloud = self.cloud
 
-        if self.cloud_cycle == 20:
+        if self.cloud_cycle == self.target_cycle:
             rand_x = random.randint(-1, 1)
             rand_y = random.randint(-1, 1)
             self.cloud["offset_x"] = self.cloud["offset_x"] + rand_x
             self.cloud["offset_y"] = self.cloud["offset_y"] + rand_y
-            if self.cloud["offset_y"] > self.cloud["max_offset"] or self.cloud["offset_y"] < -self.cloud["max_offset"]:
+
+            # cloud bound checking
+            if self.cloud["offset_y"] > self.cloud["max_offset"]:
                 self.cloud["offset_y"] = self.cloud["max_offset"]
-            if self.cloud["offset_x"] > self.cloud["max_offset"] or self.cloud["offset_x"] < -self.cloud["max_offset"]:
+            elif self.cloud["offset_y"] < -self.cloud["max_offset"]:
+                self.cloud["offset_y"] = -self.cloud["max_offset"]
+            if self.cloud["offset_x"] > self.cloud["max_offset"]:
                 self.cloud["offset_x"] = self.cloud["max_offset"]
+            elif self.cloud["offset_x"] < -self.cloud["max_offset"]:
+                self.cloud["offset_x"] = -self.cloud["max_offset"]
             
             self.cloud_cycle = 0
+            self.target_cycle = random.randint(15, 30)
+
         self.cloud_cycle += 1
         
         for i in range(len(cloud["shape"])):
             for j in range(len(cloud["shape"][i])):
                 if cloud["shape"][i][j] == 1:
                     if cloud["offset_x"] + j + cloud["anchor"][0] >= 0 and cloud["offset_y"] + i + cloud["anchor"][1] < 16:
-                        np[get_led(cloud["offset_x"] + j + cloud["anchor"][0], cloud["offset_y"] + i + cloud["anchor"][1])] = (50, 50, 50)
+                        color = (150, 150, 150)
+                        if not day:
+                            color = (50, 50, 50)
+                        np[get_led(cloud["offset_x"] + j + cloud["anchor"][0], cloud["offset_y"] + i + cloud["anchor"][1])] = color

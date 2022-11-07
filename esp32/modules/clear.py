@@ -46,24 +46,30 @@ class Clear:
                     "fade_in": True,
                 })
                 self.star_step = 0
-                self.target_star_step = random.randint(5, 30)
+                self.target_star_step = random.randint(10, 50)
+
+            star_color = (255, 243, 161)
 
             for star in [i for i in self.stars]:
                 factor = 0
                 if star["brightness"] >= 1:
-                    star["fade_in"] = False
+                    # only delete the stars immediately sometimes, creates a shimmering star effect
+                    if random.randint(0, 5) == 0:
+                        star["fade_in"] = False
+                    else:
+                        star["brightness"] = star["brightness"] - 0.1 
                 if star["fade_in"] == True:
-                    factor = .025
+                    factor = random.randint(20, 40)/1000 # random between .02 and .04
                 else: 
                     factor = -.1
 
-                star["brightness"] = star["brightness"] + factor # fix this divide by 0
+                star["brightness"] = star["brightness"] + factor
 
                 if star["brightness"] < 0:
                     self.stars.remove(star) 
                     continue  
 
-                np[get_led(star["x"], star["y"])] = (int(240 * star["brightness"]), int(234 * star["brightness"]), int(204 * star["brightness"]))
+                np[get_led(star["x"], star["y"])] = (int(star_color[0] * star["brightness"]), int(star_color[1] * star["brightness"]), int(star_color[2] * star["brightness"]))
 
             self.star_step += 1 
 

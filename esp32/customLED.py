@@ -9,11 +9,17 @@ class LED(NeoPixel):
 
     def __setitem__(self, i, val):
         if 0 <= i < self.n:
-            val = (val[0] // self.brightness_divide, val[1] // self.brightness_divide, val[2] // self.brightness_divide)
+            val = (self.dim(val[0]), self.dim(val[1]), self.dim(val[2]))
             super().__setitem__(i, val)
 
+    def dim(self, val):
+        d = val / self.brightness_divide
+        if d < 1 and d != 0:
+            d = 1
+        return int(d)
+
     def fill(self, val):
-        val = (val[0] // self.brightness_divide, val[1] // self.brightness_divide, val[2] // self.brightness_divide)
+        val = (self.dim(val[0]), self.dim(val[1]), self.dim(val[2]))
         super().fill(val)
 
 np = LED(machine.Pin(13), 256, brightness_divide=20)  

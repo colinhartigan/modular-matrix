@@ -65,8 +65,9 @@ class Weather:
         self.condition = "clouds"
         self.condition_desc = "clear sky"
         self.cloud_cover = 80
+        self.visibility = 10000 # in m
         self.temp = 69
-        self.day = False
+        self.day = True
         self.update_timer = 0
 
         self.time = True
@@ -77,7 +78,7 @@ class Weather:
 
     def update_time(self):
         time = rtc.datetime()
-        hours = time[4] - 4  # -4 for EDT, -5 for EST
+        hours = time[4] - 5  # -4 for EDT, -5 for EST
         if hours < 0:
             hours += 24
         if hours < 10:
@@ -97,20 +98,28 @@ class Weather:
 
 
     def update_weather(self):
-        print(time.time())
+
         weather = requests.get(url='https://api.openweathermap.org/data/2.5/weather?lat=33.77947361084321&lon=-84.40386294762466&appid=bc31366f445bd9b7e31876cd030a2c99')  # get weather
         weather = weather.json()
         temp = (weather["main"]["temp"] - 273.15) * (9/5) + 32
 
+        dt = weather["dt"]
+        sunrise = weather["sys"]["sunrise"]
+        sunset = weather["sys"]["sunset"]
+
+        self.day = dt > sunrise and dt < sunset
+ 
         self.condition = weather["weather"][0]["main"].lower()
         self.temp = int(temp)
-        #self.cloud_cover = weather["clouds"]["all"]
+        self.cloud_cover = weather["clouds"]["all"]
+        self.visibility = weather["visibility"]
         self.condition_desc = weather["weather"][0]["description"].lower().strip()
 
         condition_desc_text, _ = generate_word_offsets(self.condition_desc, 0, 11, 1)
         
         def finish_scroll():
             self.hide_time = False
+            self.update_timer = 0
 
         if self.day:
             queue_scroll(condition_desc_text, clear=True, color=(255, 255, 255), callback=finish_scroll)
@@ -119,23 +128,25 @@ class Weather:
 
     def loop(self):
         kwargs = {
-            "cloud_cover": self.cloud_cover
+            "cloud_cover": self.cloud_cover,
+            "visibility": self.visibility,
         }
-        self.conditions["clear"].step(self.day, **kwargs)
+        self.conditions[self.condition].step(self.day, **kwargs)
 
         if self.day:
-            self.update_timer += 1
-            if self.update_timer == 200:
+            if self.update_timer == 300:
                 self.time = False
-            if self.update_timer == 250:
-                self.update_timer = 0
-                self.update_weather()
-                self.time = True
         else:
             self.time = True 
             self.colon = False
+        
+        if self.update_timer == 500:
+            self.update_weather()
+            self.time = True
 
-        if self.time and not self.hide_time:
+        self.update_timer += 1
+
+        if self.time and not self.hide_time: 
             hours_offsets, _ = generate_word_offsets(self.hours, 9, 5, 1)
             mins_offsets, _ = generate_word_offsets((":" if self.colon else " ") + self.minutes, 7, 11, 1)
             write_word(hours_offsets, clear=False, color=(252, 251, 220))

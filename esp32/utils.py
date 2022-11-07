@@ -1132,3 +1132,6 @@ def queue_scroll(offsets, id="", repeat=False, color=(20,20,20), clear=False, ca
             }
         }
         scroll_tasks.append(payload)
+
+def map_range(n, inMin, inMax, outMin, outMax):
+    return (n - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
