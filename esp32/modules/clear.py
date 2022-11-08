@@ -59,7 +59,7 @@ class Clear:
                     else:
                         star["brightness"] = star["brightness"] - 0.1 
                 if star["fade_in"] == True:
-                    factor = random.randint(20, 40)/1000 # random between .02 and .04
+                    factor = random.randint(50, 90)/1000 # random between .02 and .04
                 else: 
                     factor = -.1
 
@@ -69,7 +69,7 @@ class Clear:
                     self.stars.remove(star) 
                     continue  
 
-                np[get_led(star["x"], star["y"])] = (int(star_color[0] * star["brightness"]), int(star_color[1] * star["brightness"]), int(star_color[2] * star["brightness"]))
+                np[get_led(star["x"], star["y"])] = (int(star_color[0] * star["brightness"]), int(star_color[1] * star["brightness"]), int(star_color[2] * star["brightness"]), 20)
 
             self.star_step += 1 
 
@@ -77,4 +77,4 @@ class Clear:
             for i in range(0, 8):
                 for j in range(0, 8):
                     if self.moon[i][j] == 1:
-                        np[get_led(i, j)] = (135,136,156) 
+                        np[get_led(i, j)] = (135,136,156)

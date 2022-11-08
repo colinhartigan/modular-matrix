@@ -134,9 +134,11 @@ class Weather:
         self.conditions[self.condition].step(self.day, **kwargs)
 
         if self.day:
+            np.brightness_divide = 20
             if self.update_timer == 300:
                 self.time = False
         else:
+            np.brightness_divide = 90
             self.time = True 
             self.colon = False
         
