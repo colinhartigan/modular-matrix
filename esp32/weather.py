@@ -41,35 +41,39 @@ class Weather:
 
     def update_weather(self):
 
-        weather = requests.get(url='https://api.openweathermap.org/data/2.5/weather?lat=33.77947361084321&lon=-84.40386294762466&appid=bc31366f445bd9b7e31876cd030a2c99')  # get weather
-        weather = weather.json()
-        temp = (weather["main"]["temp"] - 273.15) * (9/5) + 32
+        try:
+            weather = requests.get(url='https://api.openweathermap.org/data/2.5/weather?lat=33.77947361084321&lon=-84.40386294762466&appid=bc31366f445bd9b7e31876cd030a2c99')  # get weather
+            weather = weather.json()
+            temp = (weather["main"]["temp"] - 273.15) * (9/5) + 32
 
-        dt = weather["dt"]
-        sunrise = weather["sys"]["sunrise"]
-        sunset = weather["sys"]["sunset"]
+            dt = weather["dt"]
+            sunrise = weather["sys"]["sunrise"]
+            sunset = weather["sys"]["sunset"]
 
-        #self.day = dt > sunrise and dt < sunset
-        self.day = True
-        _g.day = self.day
- 
-        self.condition = weather["weather"][0]["main"].lower() 
-        self.temp = int(temp)
-        self.cloud_cover = weather["clouds"]["all"]
-        self.visibility = weather["visibility"]
-        self.condition_desc = weather["weather"][0]["description"].lower().strip()
+            #self.day = dt > sunrise and dt < sunset
+            self.day = True
+            _g.day = self.day
+    
+            self.condition = weather["weather"][0]["main"].lower() 
+            self.temp = int(temp)
+            self.cloud_cover = weather["clouds"]["all"]
+            self.visibility = weather["visibility"]
+            self.condition_desc = weather["weather"][0]["description"].lower().strip()
 
-        condition_desc_text, _ = generate_word_offsets(self.condition_desc, 0, 11, 1)
-        
-        def finish_scroll():
-            _g.time_enabled = True
-            self.update_timer = 0
-            self.scrolling = False
+            condition_desc_text, _ = generate_word_offsets(self.condition_desc, 0, 11, 1)
+            
+            def finish_scroll():
+                _g.time_enabled = True
+                self.update_timer = 0
+                self.scrolling = False
 
-        if self.day:
-            queue_scroll(condition_desc_text, clear=True, color=(255, 255, 255), callback=finish_scroll)
-            _g.time_enabled = False
-            self.scrolling = True
+            if self.day:
+                queue_scroll(condition_desc_text, clear=True, color=(255, 255, 255), callback=finish_scroll)
+                _g.time_enabled = False
+                self.scrolling = True
+        except Exception as e:
+            print("couldn't fetch weather: ", e)
+            finish_scroll()
 
 
     def loop(self):

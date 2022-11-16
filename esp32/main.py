@@ -57,21 +57,17 @@ def task_loop():
             time.sleep(time_left/1000)
         elif time_left < 0 and abs(time_left/1000) < 5:
             pass
-            print(f"target frame time exceeded but within safe zone ({abs(time_left/1000)}ms)")
+            #print(f"target frame time exceeded but within safe zone ({abs(time_left/1000)}ms)")
         else:
             print(f"frame time exceeded target frame time by {abs(time_left/1000)}ms")
 
         np.write()
 
-async def main():
-    # dispatch async tasks
-    # asyncio.create_task(scroll_loop())
-    # asyncio.create_task(render_loop())
+def main():
+    print("initializing")
     task_loop()
 
-    #asyncio.get_event_loop().run_forever() 
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
 
 np.write()  

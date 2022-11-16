@@ -10,7 +10,6 @@ class Clouds:
         self.id = "clouds"
 
         self.cloud = {
-            "large": False,
             "offset_x": 0,
             "offset_y": 0,
             "max_offset": 2,
