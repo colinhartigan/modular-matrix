@@ -31,7 +31,6 @@ class Atmosphere:
             self.lines = []
 
         visibility_factor = 11 - int(map_range(self.visibility, 0, 10000, 1, 10)) 
-        print(visibility_factor)
 
         if self.lines == []:
             self.line_length = int(map_range(visibility_factor, 0, 10, 5, 10))

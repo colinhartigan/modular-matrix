@@ -9,32 +9,37 @@ from utils import *
 from customLED import np
 import _g
 import weather
+import clock
 
 np.fill((0,0,0)) 
-framerate = 20
 
 def task_loop():
     weather_driver = weather.Weather()
+    clock_driver = clock.Clock()
 
     render_tasks = [
         {
             "task": weather_driver.loop,
-            "interval": 5,
-        },
-        {
-            "task": weather_driver.update_time,
-            "interval": 5,
         },
         {
             "task": scroll_loop,
-            "interval": 5,
         },
+        {
+            "task": scroll_render,
+        },
+        {
+            "task": clock_driver.tick,
+        },
+        {
+            "task": clock_driver.draw,
+        }
     ]
 
     last_time = time.ticks_ms()
-    target_frame_time = 1/framerate
 
     while True:
+
+        target_frame_time = (1/_g.framerate)*1000
 
         t = time.ticks_ms()
         time_diff = t - last_time
@@ -44,15 +49,19 @@ def task_loop():
 
         for task in render_tasks:
             task["task"]()
-        _g.render_step = _g.render_step + 1 if _g.render_step < (framerate - 1) else 0
-        np.write()
+        _g.render_step = _g.render_step + 1 if _g.render_step < (_g.framerate - 1) else 0
 
-        time_left = target_frame_time - (1/(time.ticks_ms() - last_time)) # keep frame times consistent (under normal circumstances)
-        #print(time_left)
+        time_left = (target_frame_time - (time.ticks_ms() - last_time)) # keep frame times consistent (under normal circumstances)
+        #print(target_frame_time, time.ticks_ms() - last_time, time_left/1000)
         if time_left > 0:
-            time.sleep(time_left)
+            time.sleep(time_left/1000)
+        elif time_left < 0 and abs(time_left/1000) < 5:
+            pass
+            print(f"target frame time exceeded but within safe zone ({abs(time_left/1000)}ms)")
         else:
-            print(f"frame time exceeded target frame time by {time_left} seconds")
+            print(f"frame time exceeded target frame time by {abs(time_left/1000)}ms")
+
+        np.write()
 
 async def main():
     # dispatch async tasks

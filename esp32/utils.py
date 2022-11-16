@@ -1078,31 +1078,37 @@ def write_word(offsets, color=(5, 5, 5), clear=True):
         np[get_led(x,y)] = color
 
 def scroll_loop():
-    # wait until all tasks are done scrolling before repeating
-    enabled_tasks = [task for task in scroll_tasks if task["enabled"]]
-    if len(enabled_tasks) == 0:
-        for task in scroll_tasks:
-            task["enabled"] = True
-        #await _g.scroll_complete_callback()
+    if _g.render_step % (_g.framerate // 5) == 0:
+        # wait until all tasks are done scrolling before repeating
+        enabled_tasks = [task for task in scroll_tasks if task["enabled"]]
+        if len(enabled_tasks) == 0:
+            for task in scroll_tasks:
+                task["enabled"] = True
+            #await _g.scroll_complete_callback()
 
+        task_copy = [i for i in scroll_tasks if i["enabled"]]
+        for task in task_copy:
+
+            task["offset"] -= 1
+
+            if task["offset"] == task["endpoint"]:
+                if not task["repeat"]:
+                    scroll_tasks.remove(task)
+                    task["callback"]() 
+                else:
+                    task["offset"] = 17
+                    task["enabled"] = False
+
+def scroll_render():
     task_copy = [i for i in scroll_tasks if i["enabled"]]
-    for task in task_copy:
-        clear_row(task["attrs"]["minY"], task["attrs"]["maxY"], task["color"] if task["clear"] else None)
-        
-        new = [(x + task["offset"], y) for x, y in task["offsets"]]
-        for led in new:
-            if led[0] >= 0 and led[0] < 16:
-                np[get_led(led[0], led[1])] = task["color"]
-
-        task["offset"] -= 1
-
-        if task["offset"] == task["endpoint"]:
-            if not task["repeat"]:
-                scroll_tasks.remove(task)
-                task["callback"]()
-            else:
-                task["offset"] = 17
-                task["enabled"] = False
+    if len(task_copy) != 0:
+        for task in task_copy:
+            clear_row(task["attrs"]["minY"], task["attrs"]["maxY"], task["color"] if task["clear"] else None)
+            
+            new = [(x + task["offset"], y) for x, y in task["offsets"]]
+            for led in new:
+                if led[0] >= 0 and led[0] < 16:
+                    np[get_led(led[0], led[1])] = task["color"] 
 
 
 def queue_scroll(offsets, id="", repeat=False, color=(20,20,20), clear=False, callback=None):
