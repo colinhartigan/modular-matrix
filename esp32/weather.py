@@ -50,8 +50,8 @@ class Weather:
             sunrise = weather["sys"]["sunrise"]
             sunset = weather["sys"]["sunset"]
 
-            #self.day = dt > sunrise and dt < sunset
-            self.day = True
+            self.day = dt > sunrise and dt < sunset
+            # self.day = False
             _g.day = self.day
     
             self.condition = weather["weather"][0]["main"].lower() 
@@ -81,7 +81,7 @@ class Weather:
             "cloud_cover": self.cloud_cover,
             "visibility": self.visibility,
         }
-        self.conditions["rain"].step(self.day, **kwargs)
+        self.conditions[self.condition].step(self.day, **kwargs)
 
         if self.day:
             np.brightness_divide = 20
@@ -96,7 +96,6 @@ class Weather:
             _g.time_enabled = False
 
         self.update_timer += 1
-
         if not _g.time_enabled and not self.scrolling:
             temp_offsets, _ = generate_word_offsets(f"{str(self.temp)}F", 5, 11, font=1)
             write_word(temp_offsets, clear=False, color=(252, 251, 220))

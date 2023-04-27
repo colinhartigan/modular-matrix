@@ -62,34 +62,34 @@ class Rain:
 
 
         # background clouds
-        if self.cloud_step >= self.cloud_shift_target_step * 14:
-            self.cloud_step = 0
+        # if self.cloud_step >= self.cloud_shift_target_step * 14:
+        #     self.cloud_step = 0
             
-            w = 16
-            h = 5
-            new_cloud = Cloud(w,h)
+        #     w = 16
+        #     h = 5
+        #     new_cloud = Cloud(w,h)
 
-            self.bg_clouds.append({
-                "shape": new_cloud.shape,
-                "offset_x": 16,
-                "offset_y": 0,
-            })
+        #     self.bg_clouds.append({
+        #         "shape": new_cloud.shape,
+        #         "offset_x": 16,
+        #         "offset_y": 0,
+        #     })
 
-        shift = False
-        if self.cloud_shift_step == self.cloud_shift_target_step:
-            shift = True
-            self.cloud_shift_step = 0
+        # shift = False
+        # if self.cloud_shift_step == self.cloud_shift_target_step:
+        #     shift = True
+        #     self.cloud_shift_step = 0
 
-        for cloud in [i for i in self.bg_clouds]:
-            if shift:
-                cloud["offset_x"] -= 1
-                if cloud["offset_x"] < -len(cloud["shape"][0]):
-                    self.bg_clouds.remove(cloud)
-            for y in range(len(cloud["shape"])):
-                for x in range(len(cloud["shape"][y])):
-                    if cloud["shape"][y][x] == 1:
-                        if x + cloud["offset_x"] < 16 and x + cloud["offset_x"] >= 0:
-                            np[get_led(cloud["offset_x"] + x, y)] = (75,75,75)
+        # for cloud in [i for i in self.bg_clouds]:
+        #     if shift:
+        #         cloud["offset_x"] -= 1
+        #         if cloud["offset_x"] < -len(cloud["shape"][0]):
+        #             self.bg_clouds.remove(cloud)
+        #     for y in range(len(cloud["shape"])):
+        #         for x in range(len(cloud["shape"][y])):
+        #             if cloud["shape"][y][x] == 1:
+        #                 if x + cloud["offset_x"] < 16 and x + cloud["offset_x"] >= 0:
+        #                     np[get_led(cloud["offset_x"] + x, y)] = (75,75,75)
 
 
         # foreground cloud

@@ -14,7 +14,7 @@ class Clouds:
             "offset_y": 0,
             "max_offset": 2,
             "anchor": (1, 2),
-            "shape": shapes.cloud_small
+            "shape": shapes.cloud_large
         }
         self.cloud_cycle = 0
         self.target_cycle = 20
@@ -29,12 +29,12 @@ class Clouds:
         # unpack kwargs
         cloud_cover = kwargs["cloud_cover"]
         
-        if cloud_cover >= 50 and not self.cloud["large"]:
-            self.cloud["large"] = True
-            self.cloud["shape"] = shapes.cloud_large
-        elif cloud_cover < 50 and self.cloud["large"]:
-            self.cloud["large"] = False
-            self.cloud["shape"] = shapes.cloud_small
+        # if cloud_cover >= 50 and not self.cloud["large"]:
+        #     self.cloud["large"] = True
+        #     self.cloud["shape"] = shapes.cloud_large
+        # elif cloud_cover < 50 and self.cloud["large"]:
+        #     self.cloud["large"] = False
+        #     self.cloud["shape"] = shapes.cloud_small
 
         if day:
             np.fill((40, 159, 189))
