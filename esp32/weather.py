@@ -1,8 +1,9 @@
 import random
-import ntptime
-import utime as time
-import urequests as requests
-from machine import RTC
+#import ntptime
+#import utime as time
+#import urequests as requests
+import time
+import requests
 
 from customLED import np
 import _g
@@ -26,7 +27,7 @@ class Weather:
             "clear": Clear(),
             "clouds": Clouds(),
         }
-        self.condition = "clouds"
+        self.condition = "clear"
         self.condition_desc = "clear sky"
         self.cloud_cover = 80
         self.visibility = 10000 # in m
@@ -50,10 +51,11 @@ class Weather:
             sunrise = weather["sys"]["sunrise"]
             sunset = weather["sys"]["sunset"]
 
-            self.day = dt > sunrise and dt < sunset
-            # self.day = False
+            # self.day = dt > sunrise and dt < sunset
+            self.day = True
             _g.day = self.day
-    
+
+            #self.condition = "clear"
             self.condition = weather["weather"][0]["main"].lower() 
             self.temp = int(temp)
             self.cloud_cover = weather["clouds"]["all"]

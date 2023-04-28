@@ -1,7 +1,9 @@
-import machine, sys, time
-import uasyncio as asyncio
+import sys, time
+#import machine
+#import uasyncio as asyncio
 import math
-import utime as time
+#import utime as time
+import time
 import _thread
 from collections import OrderedDict
 
@@ -35,13 +37,15 @@ def task_loop():
         }
     ]
 
-    last_time = time.ticks_ms()
+    #last_time = time.ticks_ms()
+    last_time = time.time() * 1000
 
     while True:
 
         target_frame_time = (1/_g.framerate)*1000
 
-        t = time.ticks_ms()
+        #t = time.ticks_ms()
+        t = time.time() * 1000
         time_diff = t - last_time
         
         #print(t - last_time)
@@ -51,7 +55,8 @@ def task_loop():
             task["task"]()
         _g.render_step = _g.render_step + 1 if _g.render_step < (_g.framerate - 1) else 0
 
-        time_left = (target_frame_time - (time.ticks_ms() - last_time)) # keep frame times consistent (under normal circumstances)
+        #time_left = (target_frame_time - (time.ticks_ms() - last_time)) # keep frame times consistent (under normal circumstances)
+        time_left = (target_frame_time - ((time.time() * 1000) - last_time)) # keep frame times consistent (under normal circumstances)
         #print(target_frame_time, time.ticks_ms() - last_time, time_left/1000)
         if time_left > 0:
             time.sleep(time_left/1000)
@@ -70,4 +75,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-np.write()  
+np.write()

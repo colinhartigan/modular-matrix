@@ -1,4 +1,4 @@
-import machine
+
 
 active_module = "weather"
 
